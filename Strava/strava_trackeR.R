@@ -1,11 +1,19 @@
 setwd('C:/Users/hharvey/Dropbox/R/trackeR')
 setwd('/Users/hharvey/Dropbox/R/trackeR')
 
+setwd('~/Documents/Development/R/curiouspal/Strava')
+
 library(trackeR)
 library(dplyr)
 library(broom)
+
+#Read the complete directory of TCX file
 TCX_file <- readDirectory('/Users/hharvey/Dropbox/R/trackeR')
+
+#Read a single file to start to work with TCX and xts file
+TCX_file <- readContainer('Morning_Run.tcx')
 run <- changeUnits(TCX_file, variable = "speed", unit = "km_per_h")
+
 sum_run <- summary(run) # summary is not calculating correctly the number of session <<-
 # calculate with mutate wr/ratio
 
