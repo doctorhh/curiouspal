@@ -5,6 +5,7 @@ setwd('~/Documents/Development/R/curiouspal/Strava')
 
 library(trackeR)
 library(dplyr)
+library(ggplot2)
 #****************** Manual steps to load file ***********************************
 #Read the complete directory of TCX file
 TCX_session <- readDirectory('/Users/hharvey/Dropbox/R/trackeR')
@@ -85,3 +86,8 @@ df_run$weight <- w
 df_run <- df_run %>% mutate(SP = avgPowerMoving/weight) %>% mutate(runningE = r_efficiency(SP,avgSpeedMoving))
 idx<-seq(1:14)
 plot(idx,df_run$runningE, type='l')
+
+#****** GGPLOT ********
+session %>% ggplot(aes(x=time,y=heart.rate))+geom_line()
+session %>% ggplot(aes(x=time,y=speed))+geom_line()
+session %>% ggplot(aes(x=time,y=power))+geom_line()  
