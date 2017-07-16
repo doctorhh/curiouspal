@@ -4,6 +4,7 @@ setwd('~/Documents/Development/R/curiouspal/Nokia')
 library(httr)
 library(jsonlite)
 library(tidyjson)
+library(lubridate)
 # ************************* STEP TO COLLECT MEASUREMENT FROM NOKIA 
 # API Key	: 21c500f4d6de863b31b9738fd870768e723c6df6826d3669645f21076d231
 # API Secret	: b907c429b14e9098b330b361f236b9b80799f861e57c285bd539b804413420
@@ -22,9 +23,28 @@ library(tidyjson)
 
 #*********************************************************************
 nokia_measure <- fromJSON('measure.JSON', simplifyDataFrame = TRUE)
-nokia_df <- as.data.frame(nokia_measure)
 
-nokia_list <- list.load('measure.JSON')
-n_list<-nokia_list$body$measuregrps
-list.map(n_list,measures)
-n_list_date <- n_list %>% list.group(date)
+
+#Creating dataframe from output received from Nokia API
+# Creating
+measurement <- bind_rows(nokia_measure$body$measuregrps)
+type_unit_col <- bind_rows(measurement$measures)
+date_list<-list(unique(measurement$date))
+dates_col <- unlist(lapply(date_list,function(x) rep(x,each=5)))
+nokia_df <- cbind(dates_col,type_unit_col)
+
+#Cleaning and preparing data
+names(nokia_df) <- c('dates','value','type','unit')
+#Converting dates columns from 
+nokia_df$dates <- as.POSIXct(nokia_df$dates, origin="1970-01-01",tz="CET")
+
+# Replacing value in column type for proper type
+# type 11 = HR // type 1 = weight // type 5 = Fat free mass // type 6 = fat ratio // type 8 = fat mass weight
+nokia_df$type <- as.factor(nokia_df$type)
+levels(nokia_df$type) <- c('weight','fat_free','fat_ratio','fat_mass','heart_rate')
+nokia_df %>% filter(type=='heart_rate') %>% ggplot(aes(x=dates,y=value))+geom_line()
+
+#Mutating column for value 
+nokia_df <- nokia_df %>% mutate(measure=(value*(10^unit)))
+nokia_df %>% filter(type=='weight') %>% ggplot(aes(x=dates,y=measure))+geom_line()
+nokia_df %>% ggplot(aes(x=dates,y=measure, group = type, col=type))+geom_line()
