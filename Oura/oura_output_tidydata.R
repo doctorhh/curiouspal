@@ -13,12 +13,12 @@ library(zoo)
 library(xts)
 
 #Loading JSON from Oura output
-file <- fromJSON('sleep_oura.json')
+file <- fromJSON('oura_Jan2017.json')
 
 ## Capturing first element of a list of list
 #HR list captured
 hr <- file$sleep$hr_5min[[1]]
-rmssd <- file$sleep$rmssd_5min[[1]]
+#rmssd <- file$sleep$rmssd_5min[[1]]
 hr_avg <- rep(file$sleep$hr_average[1], length(file$sleep$hr_5min[[1]]))
 day <- rep(file$sleep$summary_date[1] , length(file$sleep$hr_5min[[1]]))
 #Date parsing from ISO to "POSIXct" "POSIXt" 
@@ -32,10 +32,10 @@ e_pdate <- ymd_hms(e_date, tz = "CET")
 time_spam <- seq.POSIXt(s_pdate,e_pdate,by='5 min')
 
 #Creating empty dataframe
-df_oura <- data.frame(Day = as.character(), HR = as.integer(), RMSSD = as.integer(),
+df_oura <- data.frame(Day = as.character(), HR = as.integer(), 
                       HR_AVG=as.integer(),Time = as.Date(character()))
 #Row binding from each day in the JSON file
-df_day <- data.frame(Day = day, HR=hr, RMSSD=rmssd, HR_AVG=hr_avg, Time=time_spam)
+df_day <- data.frame(Day = day, HR=hr, HR_AVG=hr_avg, Time=time_spam)
 df_oura <- rbind(df_oura,df_day)
 df_oura_clean <- df_oura %>% filter(HR != 0)
 

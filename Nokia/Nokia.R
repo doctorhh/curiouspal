@@ -13,20 +13,29 @@ library(lubridate)
 # https://developer.health.nokia.com/account/request_token?oauth_callback=www.curiousraccouns.com&oauth_consumer_key=21c500f4d6de863b31b9738fd870768e723c6df6826d3669645f21076d231&oauth_nonce=2cbd45a8fd8be851182f69af0f906b0e&oauth_signature=Bwdtd8sA4vndrz5S%2FejgOAShHG8%3D&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1499165085&oauth_version=1.0
 # 
 # 
-# oauth_token=f443eb04e8b9210e45cbd9b62c20bcf059899e3db3b3164b84e659d613628cd&oauth_token_secret=9b6d48dd95cf150ef392d5851f322013b3c85e70fc71f9d1c8f7e4f6b4c3
+# oauth_token=e6d95787d9b246568e28d1510242976594f62c91b9453036809eb0429c157b&oauth_token_secret=10f81df2cdb75001d5f164bd3c3e847e9cb0ef7027dcd230d8782783e5c9b
 # 
-# https://developer.health.nokia.com/account/authorize?oauth_consumer_key=21c500f4d6de863b31b9738fd870768e723c6df6826d3669645f21076d231&oauth_nonce=4f285e245640e2c3f477464ec124cba4&oauth_signature=ZVf2bviokXd%2FsL21Dihfd6iPolk%3D&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1499164974&oauth_token=8c31877db13d4bb2cbe5d4d397b0792fffcff92ff28b20d3385deb7e13c8&oauth_version=1.0
-# oauth_token=8c31877db13d4bb2cbe5d4d397b0792fffcff92ff28b20d3385deb7e13c8&oauth_verifier=NFY7kEcXiXigmT1SqX
+# https://developer.health.nokia.com/account/authorize?oauth_consumer_key=21c500f4d6de863b31b9738fd870768e723c6df6826d3669645f21076d231&oauth_nonce=4f285e245640e2c3f477464ec124cba4&oauth_signature=ZVf2bviokXd%2FsL21Dihfd6iPolk%3D&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1499164974&oauth_token=8008d7f37110ecc07209bdbf0942928efb4372e71c8790c71f8556fd46&oauth_version=1.0
 # 
-# file_nokia <- fromJSON('http://api.health.nokia.com/measure?action=getmeas&oauth_consumer_key=21c500f4d6de863b31b9738fd870768e723c6df6826d3669645f21076d231&oauth_nonce=4877dc068b4c9eb71c4160e07e6b1661&oauth_signature=PPSbH%2Bwu7lGn4RvCZOzpqmIeBno%3D&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1499165296&oauth_token=8008d7f37110ecc07209bdbf0942928efb4372e71c8790c71f8556fd46&oauth_version=1.0&userid=8691078&startdate=1497744000&enddate=1498608000')
-# https://api.health.nokia.com/measure?action=getmeas&userid=8691078'&startdate=1497744000&enddate=1498608000
+# oauth_token=e6d95787d9b246568e28d1510242976594f62c91b9453036809eb0429c157b&oauth_verifier=OUm81RpImjKQY8ddLg4
+# 
+# #right request
+# file_nokia <- fromJSON('http://api.health.nokia.com/measure?action=getmeas&oauth_consumer_key=21c500f4d6de863b31b9738fd870768e723c6df6826d3669645f21076d231&oauth_nonce=4afd6a06c752b0b98bcc3ff9924aeee4&oauth_signature=db5nCz9CV240fh1Kl%2BPqVJL28bI%3D&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1500819467&oauth_token=8008d7f37110ecc07209bdbf0942928efb4372e71c8790c71f8556fd46&oauth_version=1.0&userid=8691078&startdate=1483228800&enddate=1498867200')
+# 
+# oauth_token=8008d7f37110ecc07209bdbf0942928efb4372e71c8790c71f8556fd46&oauth_token_secret=b9842549846e5339c0f1ec9ee3e1df449d277db26bb4c0933842c7bb2bc&userid=8691078&deviceid=0
 
 #*********************************************************************
-nokia_measure <- fromJSON('measure.JSON', simplifyDataFrame = TRUE)
+nokia_measure <- fromJSON('measure_Jan_Jul_2017.JSON', simplifyDataFrame = TRUE)
+nokia_measure <- file_nokia
 
+saveRDS(file_nokia, file='file_nokia.RData')
+nokia_measure <- readRDS('file_nokia.RData')
 
 #Creating dataframe from output received from Nokia API
 # Creating
+# Logical validation is required as missing HR data are messing around the cbind/rbind function
+# more data cleanup-required to understand logical behind <<<------
+
 measurement <- bind_rows(nokia_measure$body$measuregrps)
 type_unit_col <- bind_rows(measurement$measures)
 date_list<-list(unique(measurement$date))
