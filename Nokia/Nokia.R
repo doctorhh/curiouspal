@@ -38,8 +38,10 @@ nokia_measure <- readRDS('file_nokia.RData')
 
 measurement <- bind_rows(nokia_measure$body$measuregrps)
 type_unit_col <- bind_rows(measurement$measures)
+temp_df <- type_unit_col %>% filter(unit!=0)
+
 date_list<-list(unique(measurement$date))
-dates_col <- unlist(lapply(date_list,function(x) rep(x,each=5)))
+dates_col <- unlist(lapply(date_list,function(x) rep(x,each=4)))
 nokia_df <- cbind(dates_col,type_unit_col)
 
 #Cleaning and preparing data

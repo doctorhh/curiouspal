@@ -13,17 +13,20 @@ library(zoo)
 library(xts)
 
 #Loading JSON from Oura output
-file <- fromJSON('oura_Jan2017.json')
+file <- fromJSON('response.json')
+
+# Data wrangling for one file/one date only!! Needs to be processed for
+# for 141 days (or 144 days)
 
 ## Capturing first element of a list of list
 #HR list captured
-hr <- file$sleep$hr_5min[[1]]
-#rmssd <- file$sleep$rmssd_5min[[1]]
-hr_avg <- rep(file$sleep$hr_average[1], length(file$sleep$hr_5min[[1]]))
-day <- rep(file$sleep$summary_date[1] , length(file$sleep$hr_5min[[1]]))
+hr <- file$sleep$hr_5min[[3]]
+rmssd <- file$sleep$rmssd_5min[[3]]
+hr_avg <- rep(file$sleep$hr_average[3], length(file$sleep$hr_5min[[3]]))
+day <- rep(file$sleep$summary_date[3] , length(file$sleep$hr_5min[[3]]))
 #Date parsing from ISO to "POSIXct" "POSIXt" 
-s_date <- file$sleep$bedtime_start[1]
-e_date <- file$sleep$bedtime_end[1]
+s_date <- file$sleep$bedtime_start[3]
+e_date <- file$sleep$bedtime_end[3]
 #converting to POSIXct with Lubridate
 s_pdate <- ymd_hms(s_date, tz = "CET")
 e_pdate <- ymd_hms(e_date, tz = "CET")
