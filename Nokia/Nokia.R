@@ -49,7 +49,9 @@ dates_col <- unlist(lapply(date_list,function(x) rep(x,each=4)))
 nokia_df <- cbind(dates_col,type_unit_col)
 
 #Cleaning and preparing data
+names(nokia_df) <- c('Date','Value','Type','Unit')
 #Converting dates columns from 
+nokia_df$Date <- as.POSIXct(nokia_df$Date, origin="1970-01-01",tz="CET")
 
 # Replacing value in column type for proper type
 # type 11 = HR // type 1 = weight // type 5 = Fat free mass // type 6 = fat ratio // type 8 = fat mass weight
@@ -58,4 +60,22 @@ levels(nokia_df$Type) <- c('Weight','FatFree','FatRatio','FatMass')
 
 #Mutating column for value 
 nokia_df <- nokia_df %>% mutate(Measure=(Value*(10^Unit)))
+
+nokia_df <- nokia_df %>% select(-c(Value,Unit)) %>% spread(Type,Measure)
+nokia_df$Date <- as.Date(nokia_df$Date)
+
+#Plotting
+nokia_df %>% filter(Type=='Weight') %>% ggplot(aes(x=Dates,y=Measure))+geom_line() + geom_smooth()
+nokia_df %>% ggplot(aes(x=Dates,y=Measure, group = Type, col=Type))+geom_line()
+nokia_df %>% filter(Type=='FatMass') %>% ggplot(aes(x=Dates,y=Measure)) 
+      + geom_line() + geom_smooth()
+
+# 'data.frame':	680 obs. of  5 variables:
+# $ Dates  : POSIXct, format: "2017-06-30 05:46:45" "2017-06-30 05:46:45" "2017-06-30 05:46:45" "2017-06-30 05:46:45" ...
+# $ Value  : int  85921 76760 10662 9161 85844 77028 10270 8816 86107 76746 ...
+# $ Type   : Factor w/ 4 levels "Weight","FatFree",..: 1 2 3 4 1 2 3 4 1 2 ...
+# $ Unit   : int  -3 -3 -3 -3 -3 -3 -3 -3 -3 -3 ...
+# $ Measure: num  85.92 76.76 10.66 9.16 85.84 ...
+
+write.csv(nokia_df,'nokia_df_clean.csv')
 
