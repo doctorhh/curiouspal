@@ -11,7 +11,7 @@ str(sleepcylcle_file)
 # $ Sleep.Notes     : Factor w/ 67 levels "","Ate late",..: 67 51 56 1 52 50 36 51 55 59 ...
 # $ Heart.rate      : int  NA NA NA NA NA NA NA NA NA NA ...
 # $ Activity..steps.: int  5598 398 1407 4639 3863 3815 1227 4985 922 2357 ...
-sleepcylcle_file$End <- as.POSIXct(sleepcylcle_file$End)
+sleepcylcle_file$Start <- as.POSIXct(sleepcylcle_file$Start)
 sleepcylcle_file$End <- as.POSIXct(sleepcylcle_file$End)
 sleepcylcle_file$Sleep.quality <- as.character(sleepcylcle_file$Sleep.quality)
 sleepcylcle_file$Time.in.bed <- as.character(sleepcylcle_file$Time.in.bed)
@@ -21,3 +21,6 @@ sleepcylcle_file$Time.in.bed <- as.character(sleepcylcle_file$Time.in.bed)
 
 #Reducing the number of variables
 sc_file <- sleepcylcle_file %>% select(-c(Heart.rate, Wake.up, Activity..steps.))
+sc_file$Date <- as.Date(sc_file$End)
+inner_cycle_df <- inner_join(in_df,sc_file, by='Date')
+write.csv(inner_cycle_df,'inner_cycle_df.csv')

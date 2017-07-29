@@ -24,3 +24,10 @@ rest_file$Date<-as.Date(rest_file$Date)
 rest_file <- rest_file %>% select(-Comments)
 
 write.csv(rest_file,'Jan_Jul_2017_clean.csv')
+
+#aligned on Restwise record (143)
+in_df <- inner_join(nokia_df,rest_file, by='Date')
+write.csv(in_df,'inner_join.csv')
+
+#complete stack of 170 records
+full_df <- full_join(nokia_df,rest_file, by='Date')
