@@ -19,3 +19,14 @@ str(fr_csv_1)
 library(lubridate)
 date<-as_datetime(869121097)
 date %m+% years(20)
+
+#*****************************************
+out.file <- data.frame()
+myFiles <- list.files(pattern="*csv")
+for(i in 1:length(myFiles)){
+  
+  file <- read.csv(myFiles[i])
+  out.file <- rbind.fill(out.file, file)
+  print(myFiles[i])
+}
+write.csv(out.file, file = "january.csv")
