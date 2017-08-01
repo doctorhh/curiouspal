@@ -16,6 +16,8 @@ sleepcylcle_file$End <- as.POSIXct(sleepcylcle_file$End)
 sleepcylcle_file$Sleep.quality <- as.character(sleepcylcle_file$Sleep.quality)
 sleepcylcle_file$Time.in.bed <- as.character(sleepcylcle_file$Time.in.bed)
 
+str_replace(inner_cycle_df$Sleep.quality, '%','')
+
 # Remove the % from the Sleep.quality variable
 # Slip Sleep.Notes and analyse/quantify the content
 
@@ -23,4 +25,8 @@ sleepcylcle_file$Time.in.bed <- as.character(sleepcylcle_file$Time.in.bed)
 sc_file <- sleepcylcle_file %>% select(-c(Heart.rate, Wake.up, Activity..steps.))
 sc_file$Date <- as.Date(sc_file$End)
 inner_cycle_df <- inner_join(in_df,sc_file, by='Date')
+
+inner_cycle_df$Sleep.quality <- str_replace(inner_cycle_df$Sleep.quality, '%','')
+inner_cycle_df$Sleep.quality <- as.integer(inner_cycle_df$Sleep.quality)
+
 write.csv(inner_cycle_df,'inner_cycle_df.csv')
